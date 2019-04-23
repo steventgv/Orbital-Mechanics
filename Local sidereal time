@@ -1,0 +1,38 @@
+# Algorithm 5.3 Local sidereal time
+degrees=139
+minutes=47
+seconds=0
+
+year=2004
+month=3
+day=3
+hour=4
+minute=30
+second=0
+
+j0=367*year-int(7*(year+int((month+9)/12))/4)+int(275*month/9)+day+1721013.5
+ut=hour+minute/60+second/3600
+jd=j0+ut/24
+t0=(j0-2451545)/36525
+thetaG0=100.4606184+36000.77004*t0+0.000387933*t0**2-2.583*10**(-8)*t0**3
+
+if thetaG0>=360:
+        thetaG0=thetaG0-int(thetaG0/360)*360
+elif thetaG0<0:
+        thetaG0=thetaG0-(int(thetaG0/360)-1)*360
+
+thetaG=thetaG0+360.98564724*ut/24 #gst
+
+EL=degrees+minutes/60+seconds/3600
+WL=360-EL
+thetaG=thetaG0+EL
+lst=lst-360*int(lst/360)
+
+print("Year=", year)
+print("Month=", month)
+print("Day=", day)
+print("UT(hr)=", ut)
+print("West Longitude(deg)=", WL)
+print("East Longitude(deg)=", EL)
+print("Local Sidereal Time(deg)=", lst)
+print("Local Sidereal Time(hr)=", lst/15)
