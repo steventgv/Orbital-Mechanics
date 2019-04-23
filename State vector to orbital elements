@@ -1,0 +1,50 @@
+# Algorithm 4.1
+# State vector to keplerian orbital elements
+import numpy as np
+r_vector=np.array([-6045,-3490, 2500])
+v_vector=np.array([-3.457, 6.618, 2.533])
+
+r=np.linalg.norm(r_vector)
+v=np.sqrt(np.dot(v_vector,v_vector)) #和 v=np.sqrt(np.dot(v_vector,v_vector))一樣
+Vr=(np.dot(r_vector,v_vector)/r)
+h_vector=np.cross(r_vector,v_vector)
+h=np.linalg.norm(h_vector)
+hz=h_vector[2]
+i=np.degrees(np.arccos(hz/h))
+K_vector=np.array([0,0,1])
+N_vector=np.cross(K_vector,h_vector)
+N=np.linalg.norm(N_vector)
+Nx=N_vector[0]
+Ny=N_vector[1]
+
+if Ny>0:
+    omega=np.degrees(np.arccos(Nx/N))
+else:
+    omega=360-np.degrees(np.arccos(Nx/N))
+
+mu=398600
+e_vector=((v**2-mu/r)*r_vector-r*Vr*v_vector)/mu
+e=np.sqrt(np.dot(e_vector,e_vector))
+
+ez=e_vector[2]
+
+if ez>0:
+    w=np.degrees(np.arccos(np.dot(N_vector,e_vector)/(N*e)))
+else:
+    w=360-np.degrees(np.arccos(np.dot(N_vector,e_vector)/(N*e)))
+
+if Vr>0:
+    theta=np.degrees(np.arccos(np.dot(e_vector,r_vector)/(e*r)))
+else:
+    theta=360-np.degrees(np.arccos(np.dot(e_vector,r_vector)/(e*r)))
+rp=(h**2)/(mu*(1+e*np.cos(np.radians(0))))
+ra=(h**2)/(mu*(1+e*np.cos(np.radians(180))))
+a=(ra+rp)/2
+T=(2*np.pi*a**1.5)/(3600*np.sqrt(mu))
+
+print("a =",a)
+print("e =",e)
+print("i =",i)
+print("RAAN =",omega)
+print("AOP =",w)
+print("TA =",theta)
