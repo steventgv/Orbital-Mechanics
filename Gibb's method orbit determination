@@ -1,0 +1,21 @@
+# Alg 5.1 Gibb's method orbit determination
+import numpy as np
+R1=np.array([-294.32,4265.1,5986.7])
+R2=np.array([-1365.5,3637.6,6346.8])
+R3=np.array([-2940.3,2473.7,6555.8])
+
+r1=np.linalg.norm(R1)
+r2=np.linalg.norm(R2)
+r3=np.linalg.norm(R3)
+
+c12=np.cross(R1,R2)
+c23=np.cross(R2,R3)
+c31=np.cross(R3,R1)
+
+N=r1*c23+r2*c31+r3*c12
+D=c12+c23+c31
+S=R1*(r2-r3)+R2*(r3-r1)+R3*(r1-r2)
+mu=398600
+V2=np.sqrt(mu/np.linalg.norm(N)/np.linalg.norm(D))*(np.cross(D,R2)/r2+S)
+print("R2=",R2)
+print("V2=",V2)
