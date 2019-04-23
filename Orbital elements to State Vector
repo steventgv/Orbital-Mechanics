@@ -1,0 +1,31 @@
+# Algorithm 4.2 Orbital elements to state vector
+import numpy as np
+h=80000
+e=1.4
+i=np.radians(30)
+omega=np.radians(40)
+w=np.radians(60)
+theta=np.radians(30)
+mu=398600
+
+rp=(h**2/mu)*(1/(1+e*np.cos(theta)))*(np.cos(theta)*np.array([1,0,0])+np.sin(theta)*np.array([0,1,0]))
+vp=(mu/h)*(-np.sin(theta)*np.array([1,0,0])+(e+np.cos(theta))*np.array([0,1,0]))
+
+R3_w=np.array([[np.cos(w),np.sin(w),0],
+              [-np.sin(w),np.cos(w),0],
+              [0,0,1]])
+R1_i=np.array([[1,0,0],
+              [0,np.cos(i),np.sin(i)],
+              [0,-np.sin(i),np.cos(i)]])
+R3_omega=np.array([[np.cos(omega),np.sin(omega),0],
+              [-np.sin(omega),np.cos(omega),0],
+              [0,0,1]])
+
+
+Q_px=np.matmul(R3_w,R1_i)
+Q_px=np.matmul(Q_px,R3_omega)
+Q=Q_px.transpose()
+r=np.matmul(Q,rp)
+v=np.matmul(Q,vp)
+print("r=",r)
+print("v=",v)
