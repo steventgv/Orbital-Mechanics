@@ -1,0 +1,36 @@
+# Algorithm 5.4 State vector from range measurement, angular position and their rates
+import numpy as np
+H=0
+rho=2551
+rhodot=0
+A=np.radians(90)
+Adot=np.radians(0.113)
+a=np.radians(30)
+adot=np.radians(0.05651)
+Re=6378
+f=0.003353
+phi=np.radians(60)
+theta=np.radians(300)
+omega=72.92*10**(-6)
+I=np.array([1,0,0])
+J=np.array([0,1,0])
+K=np.array([0,0,1])
+
+R=(Re/np.sqrt(1-(2*f-f**2)*np.sin(phi)**2)+H)*np.cos(phi)*(I*np.cos(theta)+J*np.sin(theta))+(Re*(1-f)**2/np.sqrt(1-(2*f-f**2)*np.sin(phi)**2)+H)*K*np.sin(phi)
+dec=np.arcsin(np.cos(phi)*np.cos(A)*np.cos(a)+np.sin(phi)*np.sin(a))
+
+if A < np.pi:
+    h=2*np.pi-np.arccos((np.cos(phi)*np.sin(a)-np.sin(phi)*np.cos(A)*np.cos(a))/np.cos(dec))
+else:
+    h=np.arccos((np.cos(phi)*np.sin(a)-np.sin(phi)*np.cos(A)*np.cos(a))/np.cos(dec))
+
+alpha=theta-h
+Rho=np.cos(dec)*(I*np.cos(alpha)+J*np.sin(alpha))+K*np.sin(dec)
+r=R+rho*Rho
+Rdot=np.cross(omega*K,R)
+decdot=(-Adot*np.cos(phi)*np.sin(A)*np.cos(a)+adot*(np.sin(phi)*np.cos(a)-np.cos(phi)*np.cos(A)*np.sin(a)))/np.cos(dec)
+alphadot=omega+(Adot*np.cos(A)*np.cos(a)-adot*np.sin(A)*np.sin(a)+decdot*np.sin(A)*np.cos(a)*np.tan(dec))/(np.cos(phi)*np.sin(a)-np.sin(phi)*np.cos(A)*np.cos(A))
+Rhodot=I*(-alphadot*np.sin(alpha)*np.cos(dec)-decdot*np.cos(alpha)*np.sin(dec))+J*(alphadot*np.cos(alpha)*np.cos(dec)-decdot*np.sin(alpha*np.sin(dec)))+K*decdot*np.cos(dec)
+v=Rdot+rhodot*Rho+rho*Rhodot
+print("r=",r)
+print("v=",v)
