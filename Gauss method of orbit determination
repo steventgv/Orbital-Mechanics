@@ -1,0 +1,63 @@
+# Algorithm 5.5 Gauss method
+import numpy as np
+Re=6378
+mu=398600
+f=1/298.26
+H=1
+phi=np.radians(40)
+t=[0,118.104,237.577]
+alpha=[np.radians(43.5365),np.radians(54.4196),np.radians(64.3178)]
+dec=[np.radians(-8.78334),np.radians(-12.0739),np.radians(-15.1054)]
+theta=[np.radians(44.5065),np.radians(45),np.radians(45.4992)]
+R=np.zeros((3,3))
+rho=np.zeros((3,3))
+fac1=Re/np.sqrt(1-(2*f-f**2)*np.sin(phi)**2)+H    
+fac2=(Re*(1-f)**2/np.sqrt(1-(2*f-f**2)*np.sin(phi)**2)+H)*np.sin(phi)
+for i in range(3):
+    R[i,0]=fac1*np.cos(phi)*np.cos(theta[i])
+    R[i,1]=fac1*np.cos(phi)*np.sin(theta[i])
+    R[i,2]=fac2
+    rho[i,0]=np.cos(dec[i])*np.cos(alpha[i])
+    rho[i,1]=np.cos(dec[i])*np.sin(alpha[i])
+    rho[i,2]=np.sin(dec[i])
+
+tau1=t[0]-t[1]
+tau3=t[2]-t[1]
+tau=tau3-tau1
+p1=np.cross(rho[1],rho[2])
+p2=np.cross(rho[0],rho[2])
+p3=np.cross(rho[0],rho[1])
+
+D0=np.dot(rho[0],p1)
+D=np.array([[np.dot(R[0],p1),np.dot(R[0],p2),np.dot(R[0],p3)],
+          [np.dot(R[1],p1),np.dot(R[1],p2),np.dot(R[1],p3)],
+           [np.dot(R[2],p1),np.dot(R[2],p2),np.dot(R[2],p3)]])
+
+A=(-D[0,1]*tau3/tau+D[1,1]+D[2,1]*tau1/tau)/D0
+B=(D[0,1]*(tau3**2-tau**2)*tau3/tau+D[2,1]*(tau**2-tau1**2)*tau1/tau)/(6*D0)
+E=np.dot(R[1],rho[1])
+a=-(A**2+2*A*E+np.linalg.norm(R[1])**2)
+b=-2*mu*B*(A+E)
+c=-(mu*B)**2
+def posroot(Roots):
+    for i in range(len(Roots)):
+        if np.iscomplex(Roots[i])==False and Roots[i]>0:
+            x=Roots[i]
+    return x
+p=[1,0,a,0,0,b,0,0,c]
+Roots=np.roots(p)
+x=posroot(Roots)
+f1=1-1/2*mu*tau1**2/x**3
+f3=1-1/2*mu*tau3**2/x**3
+g1=tau1-1/6*mu*(tau1/x)**3
+g3=tau3-1/6*mu*(tau3/x)**3
+rho1=1/D0*((6*(D[2,0]*tau1/tau3+D[1,0]*tau/tau3)*x**3+mu*D[2,0]*(tau**2-tau1**2)*tau1/tau3)/(6*x**3+mu*(tau**2-tau3**2))-D[0,0])
+rho2=A+mu*B/x**3
+rho3=1/D0*((6*(D[0,2]*tau3/tau1-D[1,2]*tau/tau1)*x**3+mu*D[0,2]*(tau**2-tau3**2)*tau3/tau1)/(6*x**3+mu*(tau**2-tau3**2))-D[2,2])
+r1=R[0]+rho1*rho[0]
+r2=R[1]+rho2*rho[1]
+r3=R[2]+rho3*rho[2]
+v2=(f1*r3-f3*r1)/(f1*g3-f3*g1)
+v2=np.real(v2)
+print("r2=",r2)
+print("v2=",v2)
