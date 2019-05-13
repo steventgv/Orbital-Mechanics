@@ -8,6 +8,8 @@ from poliastro.bodies import Sun
 from poliastro.twobody import Orbit
 from poliastro.twobody.propagation import propagate
 from poliastro.util import time_range
+from astropy.coordinates import CartesianRepresentation
+from poliastro.frames import Planes, get_frame
 
 from astropy.coordinates import solar_system_ephemeris, get_body_barycentric_posvel
 solar_system_ephemeris.set("jpl")
