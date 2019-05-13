@@ -1,3 +1,5 @@
+#Adapting from Poliastro documentation "Going to Mars with Python using poliastro" to 
+#confirm the results of "Interplanetary trajectory" program
 import numpy as np
 import astropy.units as u
 from astropy import time
@@ -59,6 +61,33 @@ frame.plot_trajectory(
 )
 
 frame.set_view(30 * u.deg, 260 * u.deg, distance=3 * u.km)
+def change_plane(ss_orig, plane):
+    """Changes the plane of the Orbit."""
+    ss_orig_rv = ss_orig.frame.realize_frame(ss_orig.represent_as(CartesianRepresentation))
 
+    dest_frame = get_frame(ss_orig.attractor, plane, obstime=ss_orig.epoch)
+    ss_dest_rv = ss_orig_rv.transform_to(dest_frame)
+    ss_dest_rv.representation_type = CartesianRepresentation
+    ss_dest = Orbit.from_coords(ss_orig.attractor, ss_dest_rv, plane=plane)
+    return ss_dest
 fig.layout.title = "Mars Global Surveyor: from Earth to Mars"
+print("h=",np.sqrt(ss0_trans.a*Sun.k*(1-ss0_trans.ecc**2)).to(u.km**2 / u.s))
+print("a=",ss0_trans.a)
+print("e=",ss0_trans.ecc)
+print("i=",ss0_trans.inc.to(u.deg))
+print("RA=",ss0_trans.raan.to(u.deg))
+print("APO=",ss0_trans.argp.to(u.deg))
+print("TA Departure=",ss0_trans.nu.to(u.deg))
+print("TA Arrival=",ssf_trans.nu.to(u.deg),"\n")
+print("Change to Earth eliptic\n")
+print("h=",np.sqrt(ss0_trans.a*Sun.k*(1-ss0_trans.ecc**2)).to(u.km**2 / u.s))
+print("a=",change_plane(ss0_trans, Planes.EARTH_ECLIPTIC).a) 
+print("e=",change_plane(ss0_trans, Planes.EARTH_ECLIPTIC).ecc)
+print("i=",change_plane(ss0_trans, Planes.EARTH_ECLIPTIC).inc.to(u.deg))
+print("RA=",change_plane(ss0_trans, Planes.EARTH_ECLIPTIC).raan.to(u.deg))
+print("AOP=",change_plane(ss0_trans, Planes.EARTH_ECLIPTIC).argp.to(u.deg))
+print("TA Departure=",change_plane(ss0_trans, Planes.EARTH_ECLIPTIC).nu.to(u.deg))
+print("TA Arrival=",change_plane(ssf_trans, Planes.EARTH_ECLIPTIC).nu.to(u.deg))
+# The same as orbital mechanics textbook!
+
 fig
