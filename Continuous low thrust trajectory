@@ -1,0 +1,40 @@
+import numpy as np
+import matplotlib.pyplot as plt
+mu=398600
+deg = np.pi/180
+RE = 6378
+g0 = 9.807
+
+r0=[RE+300, 0, 0]
+R0=r0*u.km
+v0=[0, 7.72584, 0]
+V0=v0*u.km/u.s
+ss0 = Orbit.from_vectors(Earth, R0, V0)
+t0=0
+t_burn=1817000
+
+m0=1000
+T=0.0025
+Isp=10000
+f0=np.array([r0[0],r0[1],r0[2],v0[0],v0[1],v0[2],m0])
+
+def rates(f,t):
+    x=f[0]
+    y=f[1]
+    z=f[2]
+    vx=f[3]
+    vy=f[4]
+    vz=f[5]
+    m=f[6]
+    r=np.linalg.norm([x,y,z])
+    v=np.linalg.norm([vx,vy,vz])
+    ax=-mu*x/r**3+T*vx/(m*v)
+    ay=-mu*y/r**3+T*vy/(m*v)
+    az=-mu*z/r**3+T*vz/(m*v)
+    m_dot=-T*1000/(Isp*g0)
+    dfdt=np.array([vx,vy,vz,ax,ay,az,m_dot])
+    return dfdt
+
+time = np.linspace(0,1817000,18170000)
+f = odeint(rates, f0, time)
+plt.plot(f[:,0],f[:,1])
