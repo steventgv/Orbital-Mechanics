@@ -9,9 +9,7 @@ RE = 6378
 g0 = 9.807
 
 r0=[RE+300, 0, 0]
-R0=r0*u.km
 v0=[0, 7.72584, 0]
-V0=v0*u.km/u.s
 ss0 = Orbit.from_vectors(Earth, R0, V0)
 t0=0
 t_burn=1817000
