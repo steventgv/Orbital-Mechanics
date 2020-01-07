@@ -1,5 +1,8 @@
 import numpy as np
+import scipy
+from scipy.integrate import odeint
 import matplotlib.pyplot as plt
+plt.style.use('dark_background')
 mu=398600
 deg = np.pi/180
 RE = 6378
@@ -37,4 +40,13 @@ def rates(f,t):
 
 time = np.linspace(0,1817000,18170000)
 f = odeint(rates, f0, time)
+
+circle1=plt.Circle((0,0), 6378, color='b',fill=True)
+fig=plt.gcf()
+fig.gca().add_artist(circle1)
+plt.axis('equal')
+"Adding an axes using the same arguments as a previous axes "
 plt.plot(f[:,0],f[:,1])
+plt.show()
+
+
